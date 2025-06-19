@@ -192,11 +192,6 @@ class FeedViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentPlaceState(): PlaceInteractionState? {
-        val currentPlace = getCurrentPlace() ?: return null
-        return _currentPlaceStates.value[currentPlace.id]
-    }
-
     private fun getCurrentPlace(): Place? {
         val currentState = _state.value
         return if (currentState.places.isNotEmpty() && currentState.currentIndex < currentState.places.size) {

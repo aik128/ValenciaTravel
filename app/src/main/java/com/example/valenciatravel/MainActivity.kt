@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.example.valenciatravel.domain.usecase.ClearShownUseCase
 import com.example.valenciatravel.domain.usecase.LoadPlacesFromJsonUseCase
 import com.example.valenciatravel.presentation.navigation.NavGraph
 import com.example.valenciatravel.presentation.theme.GuideTheme
@@ -23,6 +24,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var loadPlacesFromJsonUseCase: LoadPlacesFromJsonUseCase
+
+    @Inject
+    lateinit var clearShownUseCase: ClearShownUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +46,8 @@ class MainActivity : ComponentActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             loadPlacesFromJsonUseCase()
         }
+
+        clearShownUseCase()
 
         try {
             MapsInitializer.initialize(this, MapsInitializer.Renderer.LATEST) { result ->

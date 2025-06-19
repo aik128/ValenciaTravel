@@ -16,22 +16,47 @@ class UpdateCategoryWeightWithLogicUseCase @Inject constructor(
         val currentWeight = currentWeights[categoryId] ?: 0
         val placesInCategory = categoryPlaceCounts[categoryId] ?: 1
 
-        val ratingChange = when (rating) {
-            1 -> -4
-            2 -> -2
-            3 -> 0
-            4 -> 3
-            5 -> 5
-            else -> 0
+        val ratingChange = when (placesInCategory) {
+            in 1..2 -> when (rating) {
+                5 -> 12
+                4 -> 6
+                3 -> 0
+                2 -> -6
+                1 -> -12
+                else -> 0
+            }
+            3 -> when (rating) {
+                5 -> 8
+                4 -> 4
+                3 -> 0
+                2 -> -4
+                1 -> -8
+                else -> 0
+            }
+            in 4..5 -> when (rating) {
+                5 -> 5
+                4 -> 2
+                3 -> 0
+                2 -> -2
+                1 -> -5
+                else -> 0
+            }
+            else -> when (rating) {
+                5 -> 3
+                4 -> 1
+                3 -> 0
+                2 -> -1
+                1 -> -3
+                else -> 0
+            }
         }
 
-        val adjustedChange = ratingChange.toDouble() / placesInCategory
-        val newWeight = currentWeight + adjustedChange.toInt()
+        val newWeight = currentWeight + ratingChange
 
         logging(
             categoryId,
             currentWeight,
-            adjustedChange = adjustedChange.toInt(),
+            adjustedChange = ratingChange,
             placesInCategory = placesInCategory,
             newWeight = newWeight,
         )
@@ -46,13 +71,19 @@ class UpdateCategoryWeightWithLogicUseCase @Inject constructor(
         val currentWeight = currentWeights[categoryId] ?: 0
         val placesInCategory = categoryPlaceCounts[categoryId] ?: 1
 
-        val adjustedChange = 2.0 / placesInCategory
-        val newWeight = currentWeight + adjustedChange.toInt()
+        val likeChange = when (placesInCategory) {
+            in 1..2 -> 7
+            3 -> 5
+            in 4..5 -> 3
+            else -> 2
+        }
+
+        val newWeight = currentWeight + likeChange
 
         logging(
             categoryId,
             currentWeight,
-            adjustedChange = adjustedChange.toInt(),
+            adjustedChange = likeChange,
             placesInCategory = placesInCategory,
             newWeight = newWeight,
         )
@@ -67,13 +98,19 @@ class UpdateCategoryWeightWithLogicUseCase @Inject constructor(
         val currentWeight = currentWeights[categoryId] ?: 0
         val placesInCategory = categoryPlaceCounts[categoryId] ?: 1
 
-        val adjustedChange = -3.0 / placesInCategory
-        val newWeight = currentWeight + adjustedChange.toInt()
+        val dislikeChange = when (placesInCategory) {
+            in 1..2 -> -7
+            3 -> -5
+            in 4..5 -> -3
+            else -> -2
+        }
+
+        val newWeight = currentWeight + dislikeChange
 
         logging(
             categoryId,
             currentWeight,
-            adjustedChange = adjustedChange.toInt(),
+            adjustedChange = dislikeChange,
             placesInCategory = placesInCategory,
             newWeight = newWeight,
         )
@@ -84,6 +121,7 @@ class UpdateCategoryWeightWithLogicUseCase @Inject constructor(
     suspend fun likeFromPreferences(categoryId: Int): Result<Boolean> {
         val currentWeights = getUserCategoryWeightsUseCase()
         val currentWeight = currentWeights[categoryId] ?: 0
+
         val newWeight = currentWeight + 10
 
         logging(
@@ -97,7 +135,8 @@ class UpdateCategoryWeightWithLogicUseCase @Inject constructor(
     suspend fun dislikeFromPreferences(categoryId: Int): Result<Boolean> {
         val currentWeights = getUserCategoryWeightsUseCase()
         val currentWeight = currentWeights[categoryId] ?: 0
-        val newWeight = currentWeight - 10
+
+        val newWeight = currentWeight - 8
 
         logging(
             categoryId,
@@ -108,6 +147,6 @@ class UpdateCategoryWeightWithLogicUseCase @Inject constructor(
     }
 
     fun logging(categoryId: Int, currentWeight: Int, placesInCategory: Int = -1, adjustedChange: Int = -1, newWeight: Int) {
-        Log.d("Weight Logic", "category=$categoryId, current=$currentWeight, amount=$placesInCategory, change=$adjustedChange, new=$newWeight")
+        Log.d("WeightLogic", "category=$categoryId, current=$currentWeight, amount=$placesInCategory, change=$adjustedChange, new=$newWeight")
     }
 }

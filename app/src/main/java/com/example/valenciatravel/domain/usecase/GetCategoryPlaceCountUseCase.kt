@@ -35,7 +35,4 @@ class GetCategoryPlaceCountUseCase @Inject constructor(
         }
     }
 
-    fun clearCache() {
-        categoryCountCache = null
-    }
 }

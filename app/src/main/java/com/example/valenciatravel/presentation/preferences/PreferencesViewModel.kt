@@ -8,7 +8,6 @@ import com.example.valenciatravel.domain.model.Preferences
 import com.example.valenciatravel.domain.usecase.GetCategoryRatingsUseCase
 import com.example.valenciatravel.domain.usecase.GetPreferencesUseCase
 import com.example.valenciatravel.domain.usecase.SaveCategoryRatingUseCase
-import com.example.valenciatravel.domain.usecase.UpdateCategoryWeightUseCase
 import com.example.valenciatravel.domain.usecase.UpdateCategoryWeightWithLogicUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class PreferencesViewModel @Inject constructor(
     private val getPreferencesUseCase: GetPreferencesUseCase,
-    private val updateCategoryWeightUseCase: UpdateCategoryWeightUseCase,
     private val updateCategoryWeightWithLogicUseCase: UpdateCategoryWeightWithLogicUseCase,
     private val getCategoryRatingsUseCase: GetCategoryRatingsUseCase,
     private val saveCategoryRatingUseCase: SaveCategoryRatingUseCase
@@ -34,7 +32,6 @@ class PreferencesViewModel @Inject constructor(
 
 
     private val _categoryWeights = MutableStateFlow<Map<Int, Int>>(emptyMap())
-    val categoryWeights = _categoryWeights.asStateFlow()
 
     private val _likedCategories = MutableStateFlow<Set<Int>>(emptySet())
     val likedCategories = _likedCategories.asStateFlow()
@@ -152,9 +149,16 @@ class PreferencesViewModel @Inject constructor(
 
                 Log.d("savePreferences", "liked: $liked, disliked: $disliked")
 
+                for (categoryId in liked) {
+                    saveCategoryRatingUseCase(categoryId, true)
+                }
+
+                for (categoryId in disliked) {
+                    saveCategoryRatingUseCase(categoryId, false)
+                }
+
                 _saveState.value = SaveState.Success
             } catch (e: Exception) {
-                Log.d("savePreferences", "Exception ${e.message}")
                 _saveState.value = SaveState.Error(e.message ?: "Неизвестная ошибка")
             }
         }

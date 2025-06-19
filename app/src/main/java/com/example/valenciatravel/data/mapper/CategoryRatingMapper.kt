@@ -9,10 +9,3 @@ fun CategoryRatingEntity.toDomain(): CategoryRating = CategoryRating(
     categoryId = categoryId,
     isLiked = isLiked
 )
-
-fun CategoryRating.toEntity(): CategoryRatingEntity = CategoryRatingEntity(
-    id = id,
-    userId = userId,
-    categoryId = categoryId,
-    isLiked = isLiked
-)

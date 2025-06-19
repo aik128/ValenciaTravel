@@ -15,7 +15,6 @@ import com.example.valenciatravel.domain.model.Place
 import com.example.valenciatravel.domain.repository.FavouriteRepository
 import com.example.valenciatravel.domain.repository.PlaceRepository
 import com.example.valenciatravel.domain.usecase.OpenRouteInMapsUseCase
-import com.example.valenciatravel.domain.usecase.UpdateCategoryWeightUseCase
 import com.example.valenciatravel.domain.usecase.UpdateCategoryWeightWithLogicUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -37,7 +36,6 @@ class PlaceDetailsViewModel @Inject constructor(
     private val placeRepository: PlaceRepository,
     private val favouriteRepository: FavouriteRepository,
     private val userPreferences: UserPreferences,
-    private val updateCategoryWeightUseCase: UpdateCategoryWeightUseCase,
     private val updateCategoryWeightWithLogicUseCase: UpdateCategoryWeightWithLogicUseCase,
     private val openRouteInMapsUseCase: OpenRouteInMapsUseCase,
     @ApplicationContext private val context: Context

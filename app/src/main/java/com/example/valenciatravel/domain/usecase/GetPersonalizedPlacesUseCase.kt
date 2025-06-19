@@ -24,7 +24,9 @@ class GetPersonalizedPlacesUseCase @Inject constructor(
             val categoryWeights = getUserCategoryWeightsUseCase()
             val shownPlaceIds = getShownPlaceIds()
 
-            val availablePlaces = allPlaces
+            val availablePlaces = allPlaces.filter { place ->
+                !shownPlaceIds.contains(place.id)
+            }
 
             if (availablePlaces.isEmpty()) {
                 clearShownPlaces()
@@ -48,7 +50,7 @@ class GetPersonalizedPlacesUseCase @Inject constructor(
         placesByCategory.forEach { (categoryId, categoryPlaces) ->
             val categoryWeight = categoryWeights[categoryId] ?: 0
 
-            if (categoryWeight < MIN_WEIGHT_THRESHOLD) return@forEach
+            if (categoryWeight <= MIN_WEIGHT_THRESHOLD) return@forEach
 
             categoryPlaces.forEach { place ->
                 val score = calculatePlaceScore(place, categoryWeight)

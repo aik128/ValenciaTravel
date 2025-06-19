@@ -38,9 +38,6 @@ class MapsViewModel @Inject constructor(
     var shouldRequestLocationPermission by mutableStateOf(false)
         private set
 
-    private val _visiblePlaces = MutableStateFlow<List<Place>>(emptyList())
-    val visiblePlaces = _visiblePlaces.asStateFlow()
-
     init {
         loadPlaces()
         checkLocationPermission()

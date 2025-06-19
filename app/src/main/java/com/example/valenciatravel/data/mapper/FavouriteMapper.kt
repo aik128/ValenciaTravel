@@ -10,7 +10,3 @@ fun FavouriteEntity.toDomain(): Favourite = Favourite(
     placeIds = Gson().fromJson(placeIds, object : TypeToken<List<Long>>() {}.type)
 )
 
-fun Favourite.toEntity(): FavouriteEntity = FavouriteEntity(
-    userId = userId,
-    placeIds = Gson().toJson(placeIds)
-)

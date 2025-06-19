@@ -2,19 +2,16 @@ package com.example.valenciatravel.di
 
 import com.example.valenciatravel.domain.repository.CategoryRatingRepository
 import com.example.valenciatravel.domain.repository.FavouriteRepository
-import com.example.valenciatravel.domain.repository.PlaceRepository
 import com.example.valenciatravel.domain.repository.PreferencesRepository
 import com.example.valenciatravel.domain.repository.UserRepository
 import com.example.valenciatravel.domain.usecase.AddPlaceToFavouritesUseCase
 import com.example.valenciatravel.domain.usecase.DeleteUserUseCase
-import com.example.valenciatravel.domain.usecase.GetCategoryRatingsUseCase
 import com.example.valenciatravel.domain.usecase.GetCurrentUserUseCase
 import com.example.valenciatravel.domain.usecase.GetFavouritePlaceIdsUseCase
 import com.example.valenciatravel.domain.usecase.GetFavouritePlacesUseCase
 import com.example.valenciatravel.domain.usecase.GetPreferencesUseCase
 import com.example.valenciatravel.domain.usecase.IsGuestModeUseCase
 import com.example.valenciatravel.domain.usecase.IsPlaceFavouriteUseCase
-import com.example.valenciatravel.domain.usecase.LoadPlacesFromJsonUseCase
 import com.example.valenciatravel.domain.usecase.LoginAsGuestUseCase
 import com.example.valenciatravel.domain.usecase.LoginUserUseCase
 import com.example.valenciatravel.domain.usecase.RegisterUserUseCase
@@ -113,13 +110,6 @@ object UseCaseModule {
         return IsGuestModeUseCase(repository)
     }
 
-    fun provideGetCategoryRatingsUseCase(
-        repository: CategoryRatingRepository,
-        getCurrentUserUseCase: GetCurrentUserUseCase
-    ): GetCategoryRatingsUseCase {
-        return GetCategoryRatingsUseCase(repository, getCurrentUserUseCase)
-    }
-
     @Provides
     fun provideSaveCategoryRatingUseCase(
         repository: CategoryRatingRepository,
@@ -128,7 +118,4 @@ object UseCaseModule {
         return SaveCategoryRatingUseCase(repository, getCurrentUserUseCase)
     }
 
-    fun provideLoadPlacesFromJsonUseCase(repository: PlaceRepository): LoadPlacesFromJsonUseCase {
-        return LoadPlacesFromJsonUseCase(repository)
-    }
 }

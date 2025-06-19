@@ -9,8 +9,3 @@ fun UserEntity.toDomain(): User = User(
     password = password
 )
 
-fun User.toEntity(): UserEntity = UserEntity(
-    id = id,
-    login = login,
-    password = password
-)

@@ -6,6 +6,7 @@ import com.example.valenciatravel.data.local.UserPreferences
 import com.example.valenciatravel.domain.model.User
 import com.example.valenciatravel.domain.repository.FavouriteRepository
 import com.example.valenciatravel.domain.repository.UserRepository
+import com.example.valenciatravel.domain.usecase.ClearShownUseCase
 import com.example.valenciatravel.domain.usecase.DeleteUserUseCase
 import com.example.valenciatravel.domain.usecase.DownloadOfflineMapUseCase
 import com.example.valenciatravel.domain.usecase.GetCurrentUserUseCase
@@ -25,7 +26,8 @@ class ProfileViewModel @Inject constructor(
     private val downloadOfflineMapUseCase: DownloadOfflineMapUseCase,
     private val userPreferences: UserPreferences,
     private val favouriteRepository: FavouriteRepository,
-    private val isUserAuthorizedUseCase: IsUserAuthorizedUseCase
+    private val isUserAuthorizedUseCase: IsUserAuthorizedUseCase,
+    private val clearShownUseCase: ClearShownUseCase
 ) : ViewModel() {
 
     private val _message = MutableStateFlow<String?>(null)
@@ -92,8 +94,8 @@ class ProfileViewModel @Inject constructor(
 
     fun deleteAccount() {
         viewModelScope.launch {
+            clearShownUseCase()
             _deleteState.value = DeleteUserState.Loading
-
             val currentUser = _userState.value
             if (currentUser != null) {
                 deleteUserUseCase(currentUser.id)
@@ -111,6 +113,7 @@ class ProfileViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
+            clearShownUseCase()
             userRepository.clearCurrentUser()
             _userState.value = null
             _deleteState.value = DeleteUserState.Success
