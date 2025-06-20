@@ -1,5 +1,6 @@
 package com.example.valenciatravel.domain.usecase
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
@@ -16,16 +17,23 @@ class OpenRouteInMapsUseCase @Inject constructor(
         hasLocationPermission: Boolean = false
     ): Result<Boolean> {
         return try {
-            val uri = if (hasLocationPermission) {
-                val currentLocation = getCurrentLocation()
-                if (currentLocation != null) {
-                    Uri.parse("https://www.google.com/maps/dir/${currentLocation.first},${currentLocation.second}/$destinationLat,$destinationLng")
-                } else {
-                    Uri.parse("https://www.google.com/maps/search/?api=1&query=$destinationLat,$destinationLng")
+            val currentLocation = if (hasLocationPermission) {
+                getCurrentLocation()
+            } else null
+
+            val uri = when {
+                currentLocation != null -> {
+                    Uri.parse("geo:0,0?q=$destinationLat,$destinationLng")
+                        .buildUpon()
+                        .appendQueryParameter("saddr", "${currentLocation.first},${currentLocation.second}")
+                        .appendQueryParameter("daddr", "$destinationLat,$destinationLng")
+                        .build()
                 }
-            } else {
-                Uri.parse("https://www.google.com/maps/search/?api=1&query=$destinationLat,$destinationLng")
+                else -> {
+                    Uri.parse("geo:$destinationLat,$destinationLng?q=$destinationLat,$destinationLng")
+                }
             }
+
 
             val intent = Intent(Intent.ACTION_VIEW, uri).apply {
                 setPackage("com.google.android.apps.maps")
@@ -47,7 +55,8 @@ class OpenRouteInMapsUseCase @Inject constructor(
         }
     }
 
-    private suspend fun getCurrentLocation(): Pair<Double, Double>? {
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation(): Pair<Double, Double>? {
         return try {
             val locationManager =
                 context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
