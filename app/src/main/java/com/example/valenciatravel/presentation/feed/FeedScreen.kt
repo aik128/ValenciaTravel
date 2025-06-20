@@ -1,6 +1,7 @@
 package com.example.valenciatravel.presentation.feed
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring

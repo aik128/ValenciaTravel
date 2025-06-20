@@ -10,5 +10,5 @@ object GlassEffect {
 
     val WarmYellow = Color(0xFFFFC107)
     val TextColor = Color.White
-    val ErrorColor = Color.Red
+    val ErrorColor = Color(0xFFFF0029)
 }

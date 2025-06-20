@@ -58,6 +58,9 @@ class MapsViewModel @Inject constructor(
         if (hasPermission) {
             getCurrentLocation()
         }
+        else {
+            requestLocationPermission()
+        }
     }
 
     fun requestLocationPermission() {

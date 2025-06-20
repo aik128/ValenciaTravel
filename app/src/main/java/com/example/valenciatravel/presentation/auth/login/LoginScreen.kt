@@ -117,7 +117,8 @@ fun LoginScreen(
                         Text(
                             text = (loginState as LoginState.Error).message,
                             color = GlassEffect.ErrorColor,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold
                         )
                     }
 

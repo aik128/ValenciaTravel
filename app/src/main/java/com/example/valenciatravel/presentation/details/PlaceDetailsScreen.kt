@@ -339,8 +339,6 @@ private fun RatingSection(
     onRatePlace: (Int) -> Unit
 ) {
 
-    Log.d("PlaceDetails", "RatingSection: selectedRating = $selectedRating")
-
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {

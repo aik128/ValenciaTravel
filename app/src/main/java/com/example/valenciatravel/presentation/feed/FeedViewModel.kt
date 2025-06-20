@@ -1,6 +1,8 @@
 package com.example.valenciatravel.presentation.feed
 
 
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.valenciatravel.data.local.UserPreferences
@@ -31,6 +33,8 @@ class FeedViewModel @Inject constructor(
 
     private val _currentPlaceStates = MutableStateFlow<Map<Long, PlaceInteractionState>>(emptyMap())
     val currentPlaceStates = _currentPlaceStates.asStateFlow()
+
+    private var needsRefreshAfterInteraction = false
 
     init {
         loadPersonalizedPlaces()
@@ -93,13 +97,81 @@ class FeedViewModel @Inject constructor(
 
     fun nextPlace() {
         val currentState = _state.value
-        if (currentState.currentIndex < currentState.places.size - 1) {
-            val currentPlace = currentState.places[currentState.currentIndex]
+
+        if (needsRefreshAfterInteraction) {
+            Log.d("Next place", "Needs interaction")
             viewModelScope.launch {
-                getPersonalizedPlacesUseCase.markPlaceAsShown(currentPlace.id)
+
+                val savedStates = _currentPlaceStates.value
+                val currentPlace = currentState.places.getOrNull(currentState.currentIndex)
+                currentPlace?.let {
+                    getPersonalizedPlacesUseCase.markPlaceAsShown(it.id)
+                }
+
+                val newPlaces = getPersonalizedPlacesUseCase()
+
+                _state.update {
+                    it.copy(
+                        places = newPlaces,
+                        currentIndex = 0
+                    )
+                }
+
+                val newStates = mutableMapOf<Long, PlaceInteractionState>()
+                newPlaces.forEach { place ->
+                    newStates[place.id] = savedStates[place.id] ?: PlaceInteractionState()
+                }
+
+                loadPlaceStatesWithPreservedInteractions(newPlaces, newStates)
+
+                needsRefreshAfterInteraction = false
+            }
+        }
+        else {
+            Log.d("Next place", "Doesnt need interaction")
+            if (currentState.currentIndex < currentState.places.size - 1) {
+                val currentPlace = currentState.places[currentState.currentIndex]
+                viewModelScope.launch {
+                    getPersonalizedPlacesUseCase.markPlaceAsShown(currentPlace.id)
+                }
+
+                _state.update { it.copy(currentIndex = currentState.currentIndex + 1) }
+            }
+        }
+    }
+
+    private fun loadPlaceStatesWithPreservedInteractions(
+        places: List<Place>,
+        preservedStates: Map<Long, PlaceInteractionState>
+    ) {
+        viewModelScope.launch {
+            val userId = userPreferences.getCurrentUserId()
+            if (userId == -1L) return@launch
+
+            val states = preservedStates.toMutableMap()
+
+            places.forEach { place ->
+                if (states.containsKey(place.id)) {
+                    try {
+                        val isFavorite = favouriteRepository.isPlaceFavourite(userId, place.id)
+                        states[place.id] = states[place.id]!!.copy(isFavorite = isFavorite)
+                    } catch (e: Exception) {
+                    }
+                } else {
+                    try {
+                        val isFavorite = favouriteRepository.isPlaceFavourite(userId, place.id)
+                        states[place.id] = PlaceInteractionState(
+                            isLiked = false,
+                            isDisliked = false,
+                            isFavorite = isFavorite
+                        )
+                    } catch (e: Exception) {
+                        states[place.id] = PlaceInteractionState()
+                    }
+                }
             }
 
-            _state.update { it.copy(currentIndex = currentState.currentIndex + 1) }
+            _currentPlaceStates.value = states
         }
     }
 
@@ -132,6 +204,7 @@ class FeedViewModel @Inject constructor(
             }
 
             _currentPlaceStates.value = currentStates
+            needsRefreshAfterInteraction = true
         }
     }
 
@@ -157,6 +230,7 @@ class FeedViewModel @Inject constructor(
             }
 
             _currentPlaceStates.value = currentStates
+            needsRefreshAfterInteraction = true
         }
     }
 

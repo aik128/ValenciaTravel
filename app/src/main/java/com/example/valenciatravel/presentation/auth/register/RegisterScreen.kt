@@ -130,7 +130,8 @@ fun RegisterScreen(
                         Text(
                             text = (registerState as RegisterState.Error).message,
                             color = GlassEffect.ErrorColor,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold
                         )
                     }
 

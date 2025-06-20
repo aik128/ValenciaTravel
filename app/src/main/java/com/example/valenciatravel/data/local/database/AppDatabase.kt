@@ -2,7 +2,6 @@ package com.example.valenciatravel.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import com.example.valenciatravel.data.local.dao.CategoryRatingDao
 import com.example.valenciatravel.data.local.dao.FavouriteDao
 import com.example.valenciatravel.data.local.dao.PlaceDao
@@ -25,7 +24,6 @@ import com.example.valenciatravel.data.local.entity.UserEntity
     version = 2,
     exportSchema = false
 )
-@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun preferencesDao(): PreferencesDao
